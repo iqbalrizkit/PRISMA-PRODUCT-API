@@ -176,4 +176,4 @@ products-api/
 
 ## Catatan keamanan
 
-File `.env` berisi kredensial database dan tidak boleh diunggah ke GitHub. Unggah `.env.example` saja.
+File `.env` berisi kredensial database tidak diunggah ke GitHub.
