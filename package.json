@@ -1,0 +1,25 @@
+{
+  "name": "products-api",
+  "version": "2.0.0",
+  "description": "Products API using Express, PostgreSQL, and Prisma ORM",
+  "type": "module",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "node --watch src/app.js",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:studio": "prisma studio --port 51212",
+    "db:seed": "node prisma/seed.js"
+  },
+  "dependencies": {
+    "@prisma/adapter-pg": "^7.0.0",
+    "@prisma/client": "^7.0.0",
+    "dotenv": "^16.4.7",
+    "express": "^5.3.0",
+    "pg": "^8.16.3"
+  },
+  "devDependencies": {
+    "prisma": "^7.0.0"
+  }
+}

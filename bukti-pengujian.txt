@@ -1,0 +1,72 @@
+### 1. GET /products (harap 200 + array)
+$ curl -s -i http://localhost:3000/products
+HTTP/1.1 200 OK
+X-Powered-By: Express
+Content-Type: application/json; charset=utf-8
+Content-Length: 76
+ETag: W/"4c-uFXLLQbohGea6vnPxTWuWUbADdE"
+Date: Mon, 02 Nov 2026 00:21:44 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+[{"id":1,"name":"Buku","price":15000},{"id":2,"name":"Pulpen","price":5000}]
+### 2. GET /products/1 (harap 200 + Buku)
+$ curl -s -i http://localhost:3000/products/1
+HTTP/1.1 200 OK
+X-Powered-By: Express
+Content-Type: application/json; charset=utf-8
+Content-Length: 36
+ETag: W/"24-qMNdhLEbV6Y3h1NJ/n3ily5mAfU"
+Date: Mon, 02 Nov 2026 00:21:44 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+{"id":1,"name":"Buku","price":15000}
+### 3. GET /products/999 (harap 404 + pesan JSON)
+$ curl -s -i http://localhost:3000/products/999
+HTTP/1.1 404 Not Found
+X-Powered-By: Express
+Content-Type: application/json; charset=utf-8
+Content-Length: 36
+ETag: W/"24-cicTtLzLyeiBnP5wvhNQIuADZ2E"
+Date: Mon, 02 Nov 2026 00:21:44 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+{"message":"Produk tidak ditemukan"}
+### 4. POST /products (harap 201 + produk baru)
+$ curl -s -i -X POST http://localhost:3000/products -H 'Content-Type: application/json' -d '{"name":"Penggaris","price":7000}'
+HTTP/1.1 201 Created
+X-Powered-By: Express
+Content-Type: application/json; charset=utf-8
+Content-Length: 40
+ETag: W/"28-4fNOyEF08o6KUgJ3zAi3HJgEuD0"
+Date: Mon, 02 Nov 2026 00:21:44 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+{"id":3,"name":"Penggaris","price":7000}
+### 5. GET /products/3 (produk baru bisa diambil)
+$ curl -s -i http://localhost:3000/products/3
+HTTP/1.1 200 OK
+X-Powered-By: Express
+Content-Type: application/json; charset=utf-8
+Content-Length: 40
+ETag: W/"28-4fNOyEF08o6KUgJ3zAi3HJgEuD0"
+Date: Mon, 02 Nov 2026 00:21:44 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+{"id":3,"name":"Penggaris","price":7000}
+### 6. POST /products tanpa price (harap 400)
+$ curl -s -i -X POST http://localhost:3000/products -H 'Content-Type: application/json' -d '{"name":"Tanpa harga"}'
+HTTP/1.1 400 Bad Request
+X-Powered-By: Express
+Content-Type: application/json; charset=utf-8
+Content-Length: 58
+ETag: W/"3a-2pCB/RMaiQ5i8JKE9fow7XLXWqw"
+Date: Mon, 02 Nov 2026 00:21:44 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+{"message":"name (string) dan price (number) wajib diisi"}
