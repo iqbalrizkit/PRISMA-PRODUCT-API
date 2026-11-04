@@ -144,13 +144,13 @@ Pilih Body → raw → JSON untuk request POST dan PUT.
 
 Ambil screenshot nyata dari aplikasi pengujian dan Prisma Studio. Jangan menggunakan contoh response di README sebagai pengganti screenshot.
 
-1. GET `/products` — response 200.
-2. POST `/products` — response 201.
-3. POST `/products` dengan field `price` hilang — response 400.
-4. PUT `/products/1` — response 200.
-5. PUT `/products/999` — response 404.
-6. DELETE `/products/1` — response 200.
-7. DELETE `/products/999` — response 404.
+1. GET `/products` - response 200.
+2. POST `/products` - response 201.
+3. POST `/products` dengan field `price` hilang - response 400.
+4. PUT `/products/1` - response 200.
+5. PUT `/products/999` - response 404.
+6. DELETE `/products/1` - response 200.
+7. DELETE `/products/999` - response 404.
 8. Prisma Studio sebelum perubahan dan sesudah POST, PUT, serta DELETE. Tampilkan perubahan record yang sama agar perbandingan before-after jelas.
 
 ## Struktur project
