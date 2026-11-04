@@ -1,4 +1,4 @@
-# Products API — Express, PostgreSQL, dan Prisma
+# Products API (Express, PostgreSQL, dan Prisma)
 
 Project ini merupakan pengembangan dari tugas API produk sebelumnya. Penyimpanan data yang semula menggunakan array JavaScript diganti menjadi PostgreSQL melalui Prisma ORM.
 
