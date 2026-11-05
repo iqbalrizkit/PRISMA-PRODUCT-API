@@ -1,0 +1,79 @@
+{
+  "info": {
+    "name": "Products API — Evidence",
+    "description": "Request berurutan untuk mengambil evidence skenario Products API. Jalankan POST sebelum PUT/DELETE produk uji.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000" },
+    { "key": "productId", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "01 — GET seluruh produk (200)",
+      "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/products" }
+    },
+    {
+      "name": "02 — GET ID tidak valid (400)",
+      "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/products/abc" }
+    },
+    {
+      "name": "03 — POST produk uji (201)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (pm.response.code === 201) {",
+              "  const product = pm.response.json();",
+              "  pm.collectionVariables.set('productId', String(product.id));",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"name\": \"Produk Evidence\",\n  \"price\": 7000\n}", "options": { "raw": { "language": "json" } } },
+        "url": "{{baseUrl}}/products"
+      }
+    },
+    {
+      "name": "04 — POST tanpa price (400)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"name\": \"Produk tanpa harga\"\n}", "options": { "raw": { "language": "json" } } },
+        "url": "{{baseUrl}}/products"
+      }
+    },
+    {
+      "name": "05 — PUT produk uji (200)",
+      "request": {
+        "method": "PUT",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"name\": \"Produk Evidence Diubah\",\n  \"price\": 8500\n}", "options": { "raw": { "language": "json" } } },
+        "url": "{{baseUrl}}/products/{{productId}}"
+      }
+    },
+    {
+      "name": "06 — PUT ID tidak ditemukan (404)",
+      "request": {
+        "method": "PUT",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"name\": \"Produk Tidak Ada\",\n  \"price\": 10000\n}", "options": { "raw": { "language": "json" } } },
+        "url": "{{baseUrl}}/products/999999"
+      }
+    },
+    {
+      "name": "07 — DELETE produk uji (200)",
+      "request": { "method": "DELETE", "header": [], "url": "{{baseUrl}}/products/{{productId}}" }
+    },
+    {
+      "name": "08 — DELETE ID tidak ditemukan (404)",
+      "request": { "method": "DELETE", "header": [], "url": "{{baseUrl}}/products/999999" }
+    }
+  ]
+}

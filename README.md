@@ -84,6 +84,8 @@ Buka `http://localhost:51212`, lalu pilih model `Product`.
 
 Pilih Body → raw → JSON untuk request POST dan PUT.
 
+Koleksi Postman siap impor tersedia di [`postman/Products API.postman_collection.json`](postman/Products%20API.postman_collection.json). Jalankan request POST produk uji lebih dulu; koleksi menyimpan ID response untuk request PUT dan DELETE produk uji. Panduan pengambilan screenshot dan perbandingan database ada di [LAPORAN-EVIDENCE.md](LAPORAN-EVIDENCE.md).
+
 ### 1. GET seluruh produk
 - Method: `GET`
 - URL: `http://localhost:3000/products`

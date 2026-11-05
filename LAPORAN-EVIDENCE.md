@@ -1,114 +1,137 @@
-# Laporan Evidence — Products API dengan PostgreSQL dan Prisma
+# Laporan Evidence — Products API
 
-**Nama:** ................................................  
-**NRP:** ................................................  
-**Kelas:** ..............................................  
-**Repository GitHub:** ..................................
+**Nama:** ................................................
+**NRP:** ................................................
+**Kelas:** ..............................................
+**Tanggal pengambilan evidence:** ........................
 
-## 1. Implementasi
+## Ringkasan
 
-Project API produk dikembangkan dari Express.js yang sebelumnya menyimpan data pada array menjadi menggunakan PostgreSQL sebagai database dan Prisma ORM sebagai penghubung aplikasi dengan database. Endpoint yang disediakan meliputi GET, POST, PUT, dan DELETE.
+API mengelola data produk melalui Express, Prisma, dan PostgreSQL. Laporan ini mencakup alur sukses, validasi input, data tidak ditemukan, serta perubahan record database. Koleksi request dapat diimpor dari [`postman/Products API.postman_collection.json`](postman/Products%20API.postman_collection.json).
 
-## 2. Evidence pengujian API
+> Sisipkan screenshot asli dari Postman, Bruno, atau Hoppscotch pada slot di bawah. Pastikan method, URL, request body, status HTTP, dan response terlihat. Untuk bukti database, gunakan Prisma Studio atau hasil query SQL dengan database yang sama.
 
-Tambahkan screenshot asli dari Postman, Bruno, atau Hoppscotch pada bagian di bawah ini. Pastikan method, URL, request body (jika ada), status code, dan response terlihat.
+## 1. Persiapan pengambilan bukti
 
-### 2.1 GET seluruh produk — 200 OK
+Ikuti persiapan pada README: siapkan `.env`, pasang dependency, generate Prisma Client, terapkan migration, jalankan seed, lalu jalankan `npm start`. Gunakan `http://localhost:3000`. Impor koleksi Postman yang disertakan. Koleksi memakai ID dari response POST (`productId`) agar update dan delete diarahkan ke record uji yang dibuat dalam sesi tersebut.
 
-**Screenshot:** [Tempel screenshot di sini]
+Ambil snapshot database awal sebelum menjalankan request yang mengubah data. Skenario POST dan PUT menyentuh record baru yang dibuat oleh request POST pada koleksi; DELETE menghapus record uji itu. Record awal seperti Buku dan Pulpen tidak perlu diubah.
 
-**Hasil:** Endpoint menampilkan seluruh data produk yang tersimpan pada PostgreSQL.
+## 2. Evidence request API
 
-### 2.2 POST produk baru — 201 Created
+### 2.1 GET seluruh produk — `200 OK`
 
-**Request body:**
-```json
-{"name":"Penggaris","price":7000}
-```
+Jalankan `GET /products`. Hasil yang diharapkan berupa array produk.
 
-**Screenshot:** [Tempel screenshot di sini]
+**Screenshot Postman/Bruno/Hoppscotch:**
+![GET seluruh produk — 200](evidence/01-get-products.png)
 
-**Hasil:** Produk baru berhasil disimpan dan memperoleh ID dari database.
+### 2.2 GET ID tidak valid — `400 Bad Request`
 
-### 2.3 POST gagal validasi — 400 Bad Request
+Jalankan `GET /products/abc`. API menolak ID yang bukan bilangan bulat positif.
 
-**Request body:**
-```json
-{"name":"Penghapus"}
-```
+**Screenshot:**
+![GET ID tidak valid — 400](evidence/02-get-invalid-id.png)
 
-**Screenshot:** [Tempel screenshot di sini]
+### 2.3 POST produk — `201 Created`
 
-**Hasil:** Request ditolak karena field price tidak dikirim.
+Body: `{"name":"Produk Evidence","price":7000}`. Simpan nilai `id` dari response; koleksi menyimpannya sebagai `productId` untuk skenario update/delete.
 
-### 2.4 PUT memperbarui produk — 200 OK
+**Screenshot:**
+![POST produk — 201](evidence/03-post-created.png)
 
-**URL:** `PUT /products/1`
+### 2.4 POST gagal validasi — `400 Bad Request`
 
-**Request body:**
-```json
-{"id":1,"name":"Buku Tulis","price":18000}
-```
+Kirim `{"name":"Produk tanpa harga"}`. API harus menolak request karena `price` wajib berupa angka non-negatif.
 
-**Screenshot:** [Tempel screenshot di sini]
+**Screenshot:**
+![POST validasi — 400](evidence/04-post-validation-error.png)
 
-**Hasil:** Data produk dengan ID 1 berhasil diperbarui.
+### 2.5 PUT produk uji — `200 OK`
 
-### 2.5 PUT produk tidak ditemukan — 404 Not Found
+Perbarui ID hasil POST dengan body `{"name":"Produk Evidence Diubah","price":8500}`. Response harus memperlihatkan nama dan harga baru.
 
-**URL:** `PUT /products/999`
+**Screenshot:**
+![PUT produk — 200](evidence/05-put-updated.png)
 
-**Request body:**
-```json
-{"id":999,"name":"Produk Uji","price":10000}
-```
+### 2.6 PUT ID tidak ditemukan — `404 Not Found`
 
-**Screenshot:** [Tempel screenshot di sini]
+Kirim PUT ke `/products/999999` dengan body valid. API harus mengembalikan pesan produk tidak ditemukan.
 
-**Hasil:** API mengembalikan 404 karena produk dengan ID tersebut tidak tersedia.
+**Screenshot:**
+![PUT tidak ditemukan — 404](evidence/06-put-not-found.png)
 
-### 2.6 DELETE produk — 200 OK
+### 2.7 DELETE produk uji — `200 OK`
 
-**URL:** `DELETE /products/1`
+Hapus ID hasil POST. Response memuat data produk yang dihapus.
 
-**Screenshot:** [Tempel screenshot di sini]
+**Screenshot:**
+![DELETE produk — 200](evidence/07-delete-success.png)
 
-**Hasil:** Produk dengan ID 1 berhasil dihapus.
+### 2.8 DELETE ID tidak ditemukan — `404 Not Found`
 
-### 2.7 DELETE produk tidak ditemukan — 404 Not Found
+Kirim DELETE ke `/products/999999`. API harus mengembalikan pesan produk tidak ditemukan.
 
-**URL:** `DELETE /products/999`
-
-**Screenshot:** [Tempel screenshot di sini]
-
-**Hasil:** API mengembalikan 404 karena produk tidak ditemukan.
+**Screenshot:**
+![DELETE tidak ditemukan — 404](evidence/08-delete-not-found.png)
 
 ## 3. Evidence perubahan database
 
-Ambil screenshot Prisma Studio untuk model `Product`. Gunakan record yang sama agar perubahan sebelum dan sesudah dapat dibandingkan.
+Gunakan Prisma Studio (`npm run prisma:studio`) pada model `Product`, atau jalankan query berikut di pgAdmin/klien PostgreSQL. Tampilkan data sebelum POST, setelah POST, setelah PUT, dan setelah DELETE. Record ID hasil POST menjadi record pembanding.
 
-### 3.1 Kondisi database sebelum POST
+### 3.1 Sebelum POST
 
-**Screenshot:** [Tempel screenshot Prisma Studio sebelum POST]
+Jalankan query sebelum skenario POST:
 
-### 3.2 Kondisi database sesudah POST
+```sql
+SELECT id, name, price FROM "Product" ORDER BY id;
+```
 
-**Screenshot:** [Tempel screenshot Prisma Studio sesudah POST]
+**Screenshot Prisma Studio / hasil query:**
+![Database sebelum POST](evidence/09-db-before-post.png)
 
-**Perubahan:** Record produk baru bertambah pada tabel Product.
+### 3.2 Sesudah POST
 
-### 3.3 Kondisi database sesudah PUT
+Refresh Prisma Studio atau jalankan query yang sama. Catat ID yang muncul untuk `Produk Evidence`.
 
-**Screenshot:** [Tempel screenshot Prisma Studio sesudah PUT]
+**Screenshot:**
+![Database sesudah POST](evidence/10-db-after-post.png)
 
-**Perubahan:** Nilai name dan price pada record dengan ID yang diuji berubah.
+**Perubahan:** jumlah record bertambah satu; record baru memiliki nama `Produk Evidence` dan harga `7000`.
 
-### 3.4 Kondisi database sesudah DELETE
+### 3.3 Sesudah PUT
 
-**Screenshot:** [Tempel screenshot Prisma Studio sesudah DELETE]
+Refresh data. Record dengan ID hasil POST kini bernama `Produk Evidence Diubah` dengan harga `8500`.
 
-**Perubahan:** Record dengan ID yang dihapus tidak lagi muncul pada tabel Product.
+**Screenshot:**
+![Database sesudah PUT](evidence/11-db-after-put.png)
 
-## 4. Kesimpulan
+**Perubahan:** record yang sama berubah nama dan harganya.
 
-Pengembangan ini mengubah penyimpanan data dari array di dalam proses Express menjadi PostgreSQL yang diakses menggunakan Prisma ORM. API mendukung operasi membaca, menambahkan, memperbarui, dan menghapus data produk. Validasi request juga diterapkan untuk menangani input yang tidak sesuai dan data yang tidak ditemukan.
+### 3.4 Sesudah DELETE
+
+Refresh data. Pastikan ID hasil POST sudah tidak ada.
+
+**Screenshot:**
+![Database sesudah DELETE](evidence/12-db-after-delete.png)
+
+**Perubahan:** record uji terhapus; data awal lainnya tetap ada.
+
+## 4. Catatan hasil aktual
+
+Isi status, response, dan waktu aktual setelah menjalankan request dan mengambil screenshot. Jangan menandai bukti sebagai terlampir sebelum file screenshot asli disimpan di folder `evidence/`.
+
+| Skenario | Status aktual | File screenshot |
+|---|---:|---|
+| GET seluruh produk |  | `evidence/01-get-products.png` |
+| GET ID tidak valid |  | `evidence/02-get-invalid-id.png` |
+| POST berhasil |  | `evidence/03-post-created.png` |
+| POST validasi gagal |  | `evidence/04-post-validation-error.png` |
+| PUT berhasil |  | `evidence/05-put-updated.png` |
+| PUT tidak ditemukan |  | `evidence/06-put-not-found.png` |
+| DELETE berhasil |  | `evidence/07-delete-success.png` |
+| DELETE tidak ditemukan |  | `evidence/08-delete-not-found.png` |
+
+## 5. Kesimpulan
+
+Lengkapi kesimpulan berdasarkan hasil aktual. Bukti yang lengkap menunjukkan hasil tiap skenario API dan perubahan record yang sama pada database sebelum POST, setelah POST, setelah PUT, dan setelah DELETE.
